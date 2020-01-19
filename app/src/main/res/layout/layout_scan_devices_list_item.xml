@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/backgroundListItemColor"
+    android:padding="5dp">
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/MovesenseSensor"
+            android:textColor="@color/textColor"
+            android:textStyle="bold"
+            android:padding="3dp"
+            android:textSize="14sp">
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/macAddress"
+            android:textColor="@color/textColor"
+            android:padding="3dp"
+            android:textSize="12sp">
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/StatusRSSI"
+            android:textColor="@color/textColor"
+            android:padding="3dp"
+            android:textSize="12sp">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/textColor"
+            android:padding="3dp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/macAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mac Address"
+            android:textColor="@color/textColor"
+            android:padding="3dp"
+            android:layout_gravity="end"
+            android:textSize="12sp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/rssiStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RSSI Status"
+            android:textColor="@color/textColor"
+            android:padding="3dp"
+            android:layout_gravity="end"
+            android:textSize="12sp">
+        </TextView>
+    </LinearLayout>
+</LinearLayout>

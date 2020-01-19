@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BachelorActivityTracker</string>
+
+    <string name="macAddress">Mac Address</string>
+    <string name="StatusRSSI">RSSI Status</string>
+    <string name="MovesenseSensor">Movesense Sensor</string>
+
+    <!-- rssi quality -->
+    <string name="excellent">Excellent</string>
+    <string name="good">Good</string>
+    <string name="fair">Fair</string>
+    <string name="weak">Weak</string>
+
+
+</resources>
