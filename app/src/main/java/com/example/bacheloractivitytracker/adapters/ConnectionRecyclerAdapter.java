@@ -1,6 +1,5 @@
 package com.example.bacheloractivitytracker.adapters;
 
-import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +23,11 @@ public class ConnectionRecyclerAdapter extends RecyclerView.Adapter<ConnectionRe
 
 
     private List<DeviceWrapper> mBleScanResultList = new ArrayList<>();
+    private View.OnClickListener mOnClickListener;
+
+    public ConnectionRecyclerAdapter(View.OnClickListener onClickListener) {
+        mOnClickListener = onClickListener;
+    }
 
 
     @NonNull
@@ -54,8 +58,10 @@ public class ConnectionRecyclerAdapter extends RecyclerView.Adapter<ConnectionRe
 
         sb.append("(").append(rssi).append(")");
 
+        holder.itemView.setTag(device);
         holder.macAddress.setText(device.getMRxBleDevice().getMacAddress());
         holder.rssiStatus.setText(sb.toString());
+        holder.itemView.setOnClickListener(mOnClickListener);
     }
 
     @Override

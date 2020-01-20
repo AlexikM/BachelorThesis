@@ -3,6 +3,7 @@ package com.example.bacheloractivitytracker.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Objects;
 
 import lombok.Getter;
 
@@ -25,6 +26,21 @@ public class ConnectedDevice {
         this.method = method;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ConnectedDevice)) return false;
+
+        ConnectedDevice that = (ConnectedDevice) o;
+
+        return body != null && body.serial.equals(that.body.serial);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(response, body, uri, method);
+    }
 
     //-----------Body class-------------//
     @Getter

@@ -11,10 +11,12 @@ public class DeviceWrapper {
 
     private int rssi;
     private RxBleDevice mRxBleDevice;
+    private long timestamp;
 
-    public DeviceWrapper(int rssi, RxBleDevice rxBleDevice) {
+    public DeviceWrapper(int rssi, RxBleDevice rxBleDevice, long timestamp) {
         this.rssi = rssi;
-        mRxBleDevice = rxBleDevice;
+        this.mRxBleDevice = rxBleDevice;
+        this.timestamp = timestamp;
     }
 
     @Override

@@ -3,30 +3,29 @@ package com.example.bacheloractivitytracker.utils;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.MdsSubscriptionURI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.movesense.mds.Mds;
+import com.movesense.mds.MdsConnectionListener;
 import com.movesense.mds.MdsException;
 import com.movesense.mds.MdsNotificationListener;
 import com.movesense.mds.MdsSubscription;
-
-import java.lang.reflect.Type;
 import java.util.Objects;
-
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.functions.Cancellable;
-import io.reactivex.functions.Function;
+import lombok.Getter;
 
 public enum RxMds {
     Instance;
 
     private static final String TAG = "RxMds";
 
-    //TODO JSON PRIDAT?
+    @Getter
     private Mds mMds;
     private Context context;
     private Gson gson;
@@ -87,6 +86,14 @@ public enum RxMds {
                     return gson.fromJson(s, ConnectedDevice.class);
                 })
                 .filter(Objects::nonNull);
+    }
+
+    public void connect(String macAddress, @Nullable MdsConnectionListener mdsConnectionListener) {
+        if(macAddress == null) {
+            Log.e(TAG, "connect: macAddress is null");
+            return;
+        }
+        mMds.connect(macAddress, mdsConnectionListener);
     }
 
 

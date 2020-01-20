@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.DeviceWrapper;
 import com.example.bacheloractivitytracker.utils.RxBle;
 import com.polidea.rxandroidble2.scan.ScanSettings;
@@ -47,8 +46,10 @@ public class SearchBleRepository {
                 .subscribe(
                         scanResult -> {
                             // Process scan result here.
-                            DeviceWrapper deviceWrapper = new DeviceWrapper(scanResult.getRssi(), scanResult.getBleDevice());
-                            if (deviceWrapper.getMRxBleDevice().getName() != null && deviceWrapper.getMRxBleDevice().getName().contains("Movesense")) {
+                            long currentMilis = System.currentTimeMillis() / 1000;
+                            checkActiveDevices(currentMilis);
+                            if (scanResult.getBleDevice() != null && scanResult.getBleDevice().getName() != null && scanResult.getBleDevice().getName().contains("Movesense")) {
+                                DeviceWrapper deviceWrapper = new DeviceWrapper(scanResult.getRssi(), scanResult.getBleDevice(), System.currentTimeMillis() / 1000);
                                 handleBleDevice(deviceWrapper);
                             }
                         },
@@ -84,7 +85,23 @@ public class SearchBleRepository {
         }
     }
 
+    private void checkActiveDevices(Long currentTimestamp) {
+        DeviceWrapper toRemove = null;
+        for (DeviceWrapper device : mBleScanResultList) {
+            if(currentTimestamp - device.getTimestamp() > 5) {
+                toRemove = device;
+                break;
+            }
+        }
+
+        if(toRemove != null) {
+            mBleScanResultList.remove(toRemove);
+            mDataSet.setValue(mBleScanResultList);
+        }
+    }
+
     public MutableLiveData<List<DeviceWrapper>> getDataSet() {
         return mDataSet;
     }
+
 }
