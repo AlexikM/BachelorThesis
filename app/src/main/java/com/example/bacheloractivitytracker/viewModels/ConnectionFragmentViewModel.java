@@ -11,6 +11,7 @@ import java.util.List;
 
 public class ConnectionFragmentViewModel extends ViewModel {
 
+    //TODO prejmenovat DeviceWrapper na neco vic reasonable
     private MutableLiveData<List<DeviceWrapper>> mScannedDevices;
     private ConnectionRepository mRepo;
 

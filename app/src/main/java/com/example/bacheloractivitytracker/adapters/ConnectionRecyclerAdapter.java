@@ -1,5 +1,6 @@
 package com.example.bacheloractivitytracker.adapters;
 
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,13 +43,13 @@ public class ConnectionRecyclerAdapter extends RecyclerView.Adapter<ConnectionRe
 
         StringBuilder sb = new StringBuilder();
         if (rssi > -50) {
-            sb.append(R.string.excellent);
+            sb.append("Excellent");
         } else if (rssi <= -50 && rssi >= -60) {
-            sb.append(R.string.good);
+            sb.append("Good");
         } else if (rssi < -60 && rssi>= -70) {
-            sb.append(R.string.fair);
+            sb.append("Fair");
         } else {
-            sb.append(R.string.weak);
+            sb.append("Weak");
         }
 
         sb.append("(").append(rssi).append(")");

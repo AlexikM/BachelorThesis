@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ConnectionFragment"
-    android:layout_margin="10dp"
     android:background="@color/backgroundColor">
+<!--android:layout_margin="10dp" -->
 
     <LinearLayout
         android:layout_width="match_parent"

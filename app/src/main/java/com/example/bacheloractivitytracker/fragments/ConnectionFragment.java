@@ -3,31 +3,20 @@ package com.example.bacheloractivitytracker.fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.adapters.ConnectionRecyclerAdapter;
-import com.example.bacheloractivitytracker.models.DeviceWrapper;
 import com.example.bacheloractivitytracker.viewModels.ConnectionFragmentViewModel;
-
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -46,27 +35,31 @@ public class ConnectionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_connection, container, false);
         ButterKnife.bind(this, view);
 
         mConnectionFragmentViewModel = ViewModelProviders.of(this).get(ConnectionFragmentViewModel.class);
         mConnectionFragmentViewModel.init();
+        initRecyclerView();
+        checkLocationPermissionIsGranted();
+
+        //TODO vyresit s permission, pokud mi ho neda tak to spadne a poprve to taky spadne coz je unlucky
+        //Start scanning
+        mConnectionFragmentViewModel.startScan();
+        return view;
+    }
+
+
+    private void initRecyclerView() {
         mAdapter = new ConnectionRecyclerAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
 
-        if (checkLocationPermissionIsGranted()) {
-            mConnectionFragmentViewModel.startScan();
-        }
-
-
+        //observing the liveData and if something change i am updating the adapter
         mConnectionFragmentViewModel.getScannedDevices().observe(this, deviceWrappers -> mAdapter.setDevicesScanned(deviceWrappers));
-
-        return view;
     }
 
-    //Idk which to use
+
     private boolean checkLocationPermissionIsGranted() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -97,22 +90,4 @@ public class ConnectionFragment extends Fragment {
             return true;
         }
     }
-
-    //request permissions if needed. I need this permissions for the rxBleClient
-    //source https://developer.android.com/training/permissions/requesting#java
-    private void getLocationPermission() {
-        //check if I already have the permission
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            //request for the permission
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_LOCATION);
-        }
-        //we have the permission
-    }
-
-
 }
