@@ -6,6 +6,10 @@ import com.polidea.rxandroidble2.RxBleClient;
 
 //TODO singleton predelat using dagger!!
 
+
+/*
+    Class for searching for the ble devices around
+ */
 public enum RxBle {
     Instance;
 

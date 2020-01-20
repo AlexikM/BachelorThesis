@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.bacheloractivitytracker"
-        minSdkVersion 24 //maybe change to 21
+        minSdkVersion 26 //maybe change to 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"

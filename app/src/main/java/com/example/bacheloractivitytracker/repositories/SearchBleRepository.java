@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.DeviceWrapper;
 import com.example.bacheloractivitytracker.utils.RxBle;
 import com.polidea.rxandroidble2.scan.ScanSettings;
@@ -17,22 +18,24 @@ import io.reactivex.disposables.Disposable;
 /**
  * Singleton pattern
  */
-public class ConnectionRepository {
-    private static final String TAG = "ConnectionRepository";
+public class SearchBleRepository {
+    private static final String TAG = "SearchBleRepository";
 
-    private static ConnectionRepository instance;
+    //Scanning for the devices
+    private static SearchBleRepository instance;
     private MutableLiveData<List<DeviceWrapper>> mDataSet = new MutableLiveData<>();
     private List<DeviceWrapper> mBleScanResultList = new ArrayList<>();
     private Disposable mBleScanSubscription;
 
-
-    public static ConnectionRepository getInstance() {
+    public static SearchBleRepository getInstance() {
         if (instance == null) {
-            instance = new ConnectionRepository();
+            instance = new SearchBleRepository();
         }
         return instance;
     }
 
+
+    //SEARCHING FOR THE DEVICES//
     public void startScanning() {
         mBleScanSubscription = RxBle.Instance.getClient().scanBleDevices(
                 new ScanSettings.Builder()

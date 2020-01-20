@@ -3,157 +3,95 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@color/backgroundListItemColor"
-    android:padding="5dp">
+    android:background="@drawable/rounded_black"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginLeft="20dp"
+    android:elevation="16dp">
 
+
+    <ImageView
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/test_line">
+    </ImageView>
+
+
+    <!--    <View-->
+<!--        android:layout_width="4dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#00ff00"/>-->
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="5dp">
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/MovesenseSensor"
+            android:text= "@string/MovesenseSensor"
             android:textColor="@color/textColor"
             android:textStyle="bold"
-            android:padding="3dp"
-            android:textSize="14sp">
-        </TextView>
+            android:padding="2dp"
+            android:textSize="12sp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/macAddress"
-            android:textColor="@color/textColor"
-            android:padding="3dp"
-            android:textSize="12sp">
-        </TextView>
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/macAddress"
+                android:textColor="@color/textColorSecondary"
+                android:padding="2dp"
+                android:textSize="12sp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/macAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColorSecondary"
+                android:padding="2dp"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/StatusRSSI"
-            android:textColor="@color/textColor"
-            android:padding="3dp"
-            android:textSize="12sp">
-        </TextView>
-    </LinearLayout>
+            android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/StatusRSSI"
+                android:textColor="@color/textColorSecondary"
+                android:padding="2dp"
+                android:textSize="12sp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="@color/textColor"
-            android:padding="3dp">
-        </TextView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
-        <TextView
-            android:id="@+id/macAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mac Address"
-            android:textColor="@color/textColor"
-            android:padding="3dp"
-            android:layout_gravity="end"
-            android:textSize="12sp">
-        </TextView>
-
-        <TextView
-            android:id="@+id/rssiStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="RSSI Status"
-            android:textColor="@color/textColor"
-            android:padding="3dp"
-            android:layout_gravity="end"
-            android:textSize="12sp">
-        </TextView>
+            <TextView
+                android:id="@+id/rssiStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColorSecondary"
+                android:padding="2dp"
+                android:textSize="12sp"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
-
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:orientation="vertical"-->
-<!--    android:background="#0C0C0C"-->
-<!--    android:padding="10dp"-->
-<!--    android:layout_marginTop="20dp"-->
-<!--    android:layout_marginRight="20dp"-->
-<!--    android:layout_marginLeft="20dp">-->
-
-
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Movesense Sensor"-->
-<!--        android:textColor="#ffffff"-->
-<!--        android:textStyle="bold"-->
-<!--        android:padding="3dp"-->
-<!--        android:textSize="12sp"/>-->
-
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal">-->
-
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="mac Address"-->
-<!--            android:textColor="#DDDDDD"-->
-<!--            android:padding="3dp"-->
-<!--            android:textSize="12sp"/>-->
-
-<!--        <View-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_weight="1"/>-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/macAddress"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textColor="#DDDDDD"-->
-<!--            android:gravity='right'-->
-<!--            android:padding="3dp"-->
-<!--            android:textSize="12sp"/>-->
-
-<!--    </LinearLayout>-->
-
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal">-->
-
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="RSSI Status"-->
-<!--            android:textColor="#DDDDDD"-->
-<!--            android:padding="3dp"-->
-<!--            android:textSize="12sp"/>-->
-
-<!--        <View-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_weight="1"/>-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/rssiStatus"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textColor="#DDDDDD"-->
-<!--            android:gravity='right'-->
-<!--            android:padding="3dp"-->
-<!--            android:textSize="12sp"/>-->
-<!--    </LinearLayout>-->
-<!--</LinearLayout>-->

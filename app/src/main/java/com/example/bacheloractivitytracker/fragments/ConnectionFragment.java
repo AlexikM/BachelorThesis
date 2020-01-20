@@ -11,11 +11,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.adapters.ConnectionRecyclerAdapter;
+import com.example.bacheloractivitytracker.utils.RxBle;
 import com.example.bacheloractivitytracker.viewModels.ConnectionFragmentViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +43,7 @@ public class ConnectionFragment extends Fragment {
 
         mConnectionFragmentViewModel = ViewModelProviders.of(this).get(ConnectionFragmentViewModel.class);
         mConnectionFragmentViewModel.init();
+        RxBle.Instance.initialize(getContext());
         initRecyclerView();
         checkLocationPermissionIsGranted();
 
@@ -89,5 +93,13 @@ public class ConnectionFragment extends Fragment {
         } else {
             return true;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called");
+        mConnectionFragmentViewModel.stopScan();
+
     }
 }

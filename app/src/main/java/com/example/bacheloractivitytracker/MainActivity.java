@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RxBle.Instance.initialize(getApplicationContext());
         RxMds.Instance.init(getApplicationContext());
         setContentView(R.layout.activity_main);
     }
