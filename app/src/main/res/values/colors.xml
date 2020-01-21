@@ -7,4 +7,5 @@
     <color name="textColor">#ffffff</color>
     <color name="textColorSecondary">#dddddd</color>
     <color name="backgroundListItemColor">#494645</color>
+    <color name="loadingCircle">#F51919 </color>
 </resources>

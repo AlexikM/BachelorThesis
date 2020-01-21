@@ -18,14 +18,12 @@ import com.movesense.mds.MdsSubscription;
 import java.util.Objects;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import lombok.Getter;
 
 public enum RxMds {
     Instance;
 
     private static final String TAG = "RxMds";
 
-    @Getter
     private Mds mMds;
     private Context context;
     private Gson gson;

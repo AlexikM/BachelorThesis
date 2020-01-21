@@ -4,6 +4,7 @@ package com.example.bacheloractivitytracker.fragments;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -56,6 +57,8 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
         ButterKnife.bind(this, view);
 
         lt = new LoadToast(getContext());
+        //lt.setBackgroundColor(Color.rgb(0,0,0));
+        lt.setProgressColor(Color.rgb(27,226,254));
 
         mConnectionFragmentViewModel = ViewModelProviders.of(this).get(ConnectionFragmentViewModel.class);
         mConnectionFragmentViewModel.init();
@@ -126,7 +129,7 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
         Log.d(TAG, "onClick: clicked on: " + device.getMRxBleDevice().getName());
 
         //kolecko
-        lt.setText("Connecting");
+        //lt.setText("Connecting");
         lt.show();
 
         MdsConnectionListener mdsConnectionListener = new MdsConnectionListener() {
@@ -153,6 +156,6 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
                 //Called when Mds connection disconnects (e.g. device out of range)
             }
         };
-        RxMds.Instance.getMMds().connect(device.getMRxBleDevice().getMacAddress(), mdsConnectionListener);
+        RxMds.Instance.connect(device.getMRxBleDevice().getMacAddress(), mdsConnectionListener);
     }
 }
