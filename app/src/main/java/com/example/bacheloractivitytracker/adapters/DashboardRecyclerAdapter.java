@@ -83,7 +83,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
     class DashboardViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.HR_value)
+        @BindView(R.id.steps_value)
         TextView steps;
 
         @BindView(R.id.distance_value)

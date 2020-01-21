@@ -1,5 +1,6 @@
 package com.example.bacheloractivitytracker.repositories;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
@@ -15,7 +16,7 @@ public class ConnectedDevicesRepository {
 //    private List<ConnectedDeviceModel> connectedDevices = new ArrayList<>();
 //    private MutableLiveData<List<ConnectedDeviceModel>> mDataSet = new MutableLiveData<>();
 
-    private MutableLiveData<ConnectedDeviceModel> mMutableDevice;
+    private MutableLiveData<ConnectedDeviceModel> mMutableDevice = new MutableLiveData<>();
     private Disposable mSubscription;
 
     public static ConnectedDevicesRepository getInstance() {
@@ -63,9 +64,9 @@ public class ConnectedDevicesRepository {
         mSubscription.dispose();
     }
 
-//    public LiveData<List<ConnectedDeviceModel>> getConnnectedDevices() {
-//        return mDataSet;
-//    }
+    public LiveData<ConnectedDeviceModel> getChangedDevice() {
+        return mMutableDevice;
+    }
 
 
 

@@ -11,6 +11,8 @@ import com.example.bacheloractivitytracker.utils.RxMds;
 
 import java.util.List;
 
+
+//TODO https://www.youtube.com/watch?v=H9D_HoOeKWM
 public class MainActivity extends AppCompatActivity {
 
     private ConnectedDevicesRepository mRepo;
@@ -28,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         mRepo.start();
     }
 
-    public LiveData<List<ConnectedDeviceModel>> getConnectedDevices() {
-        return mRepo.getConnnectedDevices();
+    public LiveData<ConnectedDeviceModel> getConnectedDevices() {
+        return mRepo.getChangedDevice();
     }
 
     @Override
