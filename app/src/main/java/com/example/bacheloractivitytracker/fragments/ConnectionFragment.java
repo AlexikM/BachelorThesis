@@ -41,6 +41,8 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
     //TODO make method variable, no class one
     private LoadToast lt;
     private ConnectionFragmentViewModel mConnectionFragmentViewModel;
+
+    //TODO nemuze to byt private?
     private ConnectionRecyclerAdapter mAdapter;
 
 

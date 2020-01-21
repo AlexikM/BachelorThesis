@@ -30,7 +30,6 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
     //connectedDevicesRepo
     public DashboardRecyclerAdapter(LiveData<List<ConnectedDeviceModel>> changedConnectedDevices, LifecycleOwner owner) {
         connectedDevices = new ArrayList<>();
-
         changedConnectedDevices.observe(owner, this::handleConnectivity);
 
     }
@@ -58,7 +57,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
     @Override
     public int getItemCount() {
-        connectedDevices.size();
+        return connectedDevices.size();
     }
 
 //    private void handleDisconnect(String serial) {
