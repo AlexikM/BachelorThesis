@@ -97,11 +97,12 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/HR_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="90"
                         android:textColor="@color/textColor"
-                        android:textSize="20dp">
+                        android:textSize="20sp">
 
                     </TextView>
 
@@ -110,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:text="bpm"
                         android:textColor="@color/textColor"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -135,18 +136,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/distance_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="14"
                         android:textColor="@color/textColor"
-                        android:textSize="20dp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="km"
                         android:textColor="@color/textColor"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -171,18 +173,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/calories_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="580"
                         android:textColor="@color/textColor"
-                        android:textSize="20dp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="kcal"
                         android:textColor="@color/textColor"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -207,18 +210,19 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/steps_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1431"
                         android:textColor="@color/textColor"
-                        android:textSize="20dp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="steps"
                         android:textColor="@color/textColor"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

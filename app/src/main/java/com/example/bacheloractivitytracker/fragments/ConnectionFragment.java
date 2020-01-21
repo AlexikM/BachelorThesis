@@ -1,6 +1,5 @@
 package com.example.bacheloractivitytracker.fragments;
 
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
@@ -12,21 +11,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.adapters.ConnectionRecyclerAdapter;
-import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.DeviceWrapper;
 import com.example.bacheloractivitytracker.utils.RxBle;
 import com.example.bacheloractivitytracker.utils.RxMds;
 import com.example.bacheloractivitytracker.viewModels.ConnectionFragmentViewModel;
-import com.google.gson.GsonBuilder;
 import com.movesense.mds.MdsConnectionListener;
 import com.movesense.mds.MdsException;
 
@@ -34,8 +28,6 @@ import net.steamcrafted.loadtoast.LoadToast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 
 public class ConnectionFragment extends Fragment implements View.OnClickListener{
@@ -45,6 +37,8 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
     @BindView(R.id.found_devices)
     RecyclerView mRecyclerView;
 
+
+    //TODO make method variable, no class one
     private LoadToast lt;
     private ConnectionFragmentViewModel mConnectionFragmentViewModel;
     private ConnectionRecyclerAdapter mAdapter;

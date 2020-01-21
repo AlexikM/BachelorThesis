@@ -5,14 +5,11 @@ import androidx.lifecycle.LiveData;
 
 import android.os.Bundle;
 
-import com.example.bacheloractivitytracker.models.ConnectedDevice;
+import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
 import com.example.bacheloractivitytracker.repositories.ConnectedDevicesRepository;
-import com.example.bacheloractivitytracker.utils.RxBle;
 import com.example.bacheloractivitytracker.utils.RxMds;
 
 import java.util.List;
-
-import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         mRepo.start();
     }
 
-    public LiveData<List<ConnectedDevice>> getConnectedDevices() {
+    public LiveData<List<ConnectedDeviceModel>> getConnectedDevices() {
         return mRepo.getConnnectedDevices();
     }
 

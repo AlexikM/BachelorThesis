@@ -3,10 +3,9 @@ package com.example.bacheloractivitytracker.utils;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.bacheloractivitytracker.models.ConnectedDevice;
+import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
 import com.example.bacheloractivitytracker.models.MdsSubscriptionURI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -77,11 +76,11 @@ public enum RxMds {
         });
     }
 
-    public Observable<ConnectedDevice> connectedDeviceObservable() {
+    public Observable<ConnectedDeviceModel> connectedDeviceObservable() {
         return genericSubscribe(Path.URI_CONNECTED_DEVICES)
                 .map(s -> {
                     Log.e(TAG, "connectedDeviceObservable(): " + s );
-                    return gson.fromJson(s, ConnectedDevice.class);
+                    return gson.fromJson(s, ConnectedDeviceModel.class);
                 })
                 .filter(Objects::nonNull);
     }
