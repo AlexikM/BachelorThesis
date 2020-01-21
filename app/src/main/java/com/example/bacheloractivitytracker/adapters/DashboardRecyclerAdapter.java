@@ -8,8 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
@@ -20,7 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecyclerAdapter.DashboardViewHolder>{
+public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecyclerAdapter.DashboardViewHolder> {
     private static final String TAG = "DashboardRecyclerAdapter";
 
 
@@ -28,22 +28,11 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
     //LiveData<ConnectedDeviceModel> device is here the changing device which is being subscribe in
     //connectedDevicesRepo
-    public DashboardRecyclerAdapter(LiveData<ConnectedDeviceModel> device, LifecycleOwner owner) {
+    public DashboardRecyclerAdapter(LiveData<List<ConnectedDeviceModel>> changedConnectedDevices, LifecycleOwner owner) {
         connectedDevices = new ArrayList<>();
 
-        device.observe(owner, new Observer<ConnectedDeviceModel>() {
-            @Override
-            public void onChanged(ConnectedDeviceModel device) {
-                if (device.getBody().getConnection() != null) {
-                    //nove pripojeni
-                    ConnectedDevice newDevice = new ConnectedDevice(0 ,0, 0, device);
-                    connectedDevices.add(newDevice);
-                } else {
-                    //odpojeni
-                    handleDisconnect(device.getBody().getSerial());
-                }
-            }
-        });
+        changedConnectedDevices.observe(owner, this::handleConnectivity);
+
     }
 
 
@@ -57,29 +46,74 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
     @Override
     public void onBindViewHolder(@NonNull DashboardViewHolder holder, int position) {
+        ConnectedDevice device = connectedDevices.get(position);
 
+        holder.itemView.setTag(device);
+        //TODO OPRAVIT TU
+        holder.calories.setText(Integer.toString(device.getCalories()));
+        holder.heartRate.setText(Integer.toString(device.getHeartRate()));
+        holder.distance.setText(Integer.toString(device.getDistance()));
+        holder.steps.setText(Integer.toString(device.getSteps()));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        connectedDevices.size();
     }
 
-    private void handleDisconnect(String serial) {
-        ConnectedDevice toBeRemove = null;
-        for (ConnectedDevice device : connectedDevices) {
-            if (serial.equals(device.getSerial())) {
-                toBeRemove = device;
-                break;
+//    private void handleDisconnect(String serial) {
+//        ConnectedDevice toBeRemove = null;
+//        for (ConnectedDevice device : connectedDevices) {
+//            if (serial.equals(device.getSerial())) {
+//                toBeRemove = device;
+//                break;
+//            }
+//        }
+//
+//        if(toBeRemove != null) {
+//            connectedDevices.remove(toBeRemove);
+//        }
+//    }
+
+    private void handleConnectivity(List<ConnectedDeviceModel> connectedDeviceModels) {
+        int sizeModels = connectedDeviceModels.size();
+        int connectedSize = connectedDevices.size();
+
+        if (sizeModels > connectedSize) {
+            //pripojeno
+            handleConnection(connectedDeviceModels);
+        } else if (sizeModels < connectedSize) {
+            //odpojeno
+            handleDisconnection(connectedDeviceModels);
+        }
+    }
+
+    private void handleConnection(List<ConnectedDeviceModel> connectedDeviceModels) {
+        for (ConnectedDeviceModel deviceModel : connectedDeviceModels) {
+            for (ConnectedDevice device : connectedDevices) {
+                if (!deviceModel.getBody().getSerial().equals(device.getSerial())) {
+                    connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, deviceModel));
+                    break;
+                }
             }
         }
 
-        if(toBeRemove != null) {
+    }
+
+    private void handleDisconnection(List<ConnectedDeviceModel> connectedDeviceModels) {
+        ConnectedDevice toBeRemove = null;
+        for (ConnectedDevice device : connectedDevices) {
+            for (ConnectedDeviceModel deviceModel : connectedDeviceModels) {
+                if (!deviceModel.getBody().getSerial().equals(device.getSerial())) {
+                    toBeRemove = device;
+                    break;
+                }
+            }
+        }
+        if (toBeRemove != null) {
             connectedDevices.remove(toBeRemove);
         }
     }
-
-
 
     class DashboardViewHolder extends RecyclerView.ViewHolder {
 
@@ -95,7 +129,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         @BindView(R.id.HR_value)
         TextView heartRate;
 
-        public DashboardViewHolder(@NonNull View itemView) {
+        DashboardViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

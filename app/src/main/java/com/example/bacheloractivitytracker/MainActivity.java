@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         mRepo.start();
     }
 
-    public LiveData<ConnectedDeviceModel> getConnectedDevices() {
-        return mRepo.getChangedDevice();
+    public LiveData<List<ConnectedDeviceModel>> getConnectedDevices() {
+        return mRepo.getConnectedDevices();
     }
 
     @Override
