@@ -46,11 +46,6 @@ public class ConnectedDevicesRepository {
         });
     }
 
-//    public void start() {
-//        mSubscription = RxMds.Instance.connectedDeviceObservable().subscribe(connectedDevice -> {
-//            mMutableDevice.setValue(connectedDevice);
-//        });
-//    }
 
     private void addDevice(ConnectedDeviceModel connectedDevice) {
         connectedDevices.add(connectedDevice);

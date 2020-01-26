@@ -5,10 +5,15 @@ import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
@@ -45,28 +50,45 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
     //TODO nemuze to byt private?
     private ConnectionRecyclerAdapter mAdapter;
 
+    NavController navController = null;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_connection, container, false);
         ButterKnife.bind(this, view);
+        RxBle.Instance.initialize(getContext());
 
+
+
+        initViewModel();
+        initRecyclerView();
+        initLoadingToast();
+        checkLocationPermissionIsGranted();
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
+
+    private void initViewModel() {
+        //TODO vyresit s permission, pokud mi ho neda tak to spadne a poprve to taky spadne coz je unlucky
+        //Start scanning
+        mConnectionFragmentViewModel = ViewModelProviders.of(this).get(ConnectionFragmentViewModel.class);
+        mConnectionFragmentViewModel.init();
+
+        mConnectionFragmentViewModel.startScan();
+    }
+
+    private void initLoadingToast() {
         lt = new LoadToast(getContext());
         //lt.setBackgroundColor(Color.rgb(0,0,0));
         lt.setProgressColor(Color.rgb(27,226,254));
-
-        mConnectionFragmentViewModel = ViewModelProviders.of(this).get(ConnectionFragmentViewModel.class);
-        mConnectionFragmentViewModel.init();
-        RxBle.Instance.initialize(getContext());
-        initRecyclerView();
-        checkLocationPermissionIsGranted();
-
-        //TODO vyresit s permission, pokud mi ho neda tak to spadne a poprve to taky spadne coz je unlucky
-        //Start scanning
-        mConnectionFragmentViewModel.startScan();
-
-        return view;
     }
 
 
@@ -139,6 +161,7 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
             public void onConnectionComplete(String s, String s1) {
                 //Called when the full Mds / Whiteboard connection has been succesfully established
                 lt.success();
+                navController.navigate(R.id.action_connectionFragment_to_dashboardFragment);
             }
 
             @Override

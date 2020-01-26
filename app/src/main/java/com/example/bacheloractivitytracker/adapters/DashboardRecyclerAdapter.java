@@ -3,20 +3,17 @@ package com.example.bacheloractivitytracker.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,8 +23,6 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
     private List<ConnectedDevice> connectedDevices;
 
-    //LiveData<ConnectedDeviceModel> device is here the changing device which is being subscribe in
-    //connectedDevicesRepo
     public DashboardRecyclerAdapter(LiveData<List<ConnectedDeviceModel>> changedConnectedDevices, LifecycleOwner owner) {
         connectedDevices = new ArrayList<>();
         changedConnectedDevices.observe(owner, this::handleConnectivity);
@@ -88,10 +83,16 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
     }
 
     private void handleConnection(List<ConnectedDeviceModel> connectedDeviceModels) {
+        if (connectedDevices.size() == 0 && connectedDeviceModels.size() == 1) {
+            connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, connectedDeviceModels.get(0)));
+            notifyDataSetChanged();
+        }
+
         for (ConnectedDeviceModel deviceModel : connectedDeviceModels) {
             for (ConnectedDevice device : connectedDevices) {
                 if (!deviceModel.getBody().getSerial().equals(device.getSerial())) {
                     connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, deviceModel));
+                    notifyDataSetChanged();
                     break;
                 }
             }
@@ -105,6 +106,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
             for (ConnectedDeviceModel deviceModel : connectedDeviceModels) {
                 if (!deviceModel.getBody().getSerial().equals(device.getSerial())) {
                     toBeRemove = device;
+                    notifyDataSetChanged();
                     break;
                 }
             }
