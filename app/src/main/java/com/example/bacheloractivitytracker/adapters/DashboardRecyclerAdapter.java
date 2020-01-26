@@ -83,36 +83,56 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
     }
 
     private void handleConnection(List<ConnectedDeviceModel> connectedDeviceModels) {
-        if (connectedDevices.size() == 0 && connectedDeviceModels.size() == 1) {
-            connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, connectedDeviceModels.get(0)));
+        //called when the fragment is created or connected one device
+        if(connectedDevices.size() == 0) {
+            for(ConnectedDeviceModel device : connectedDeviceModels) {
+                connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, device));
+            }
             notifyDataSetChanged();
+            return;
         }
 
-        for (ConnectedDeviceModel deviceModel : connectedDeviceModels) {
+        //for reconnection when the device is connected automatically
+        for (ConnectedDeviceModel model : connectedDeviceModels) {
             for (ConnectedDevice device : connectedDevices) {
-                if (!deviceModel.getBody().getSerial().equals(device.getSerial())) {
-                    connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, deviceModel));
+                if(!device.getSerial().equals(model.getBody().getSerial())) {
+                    connectedDevices.add(new ConnectedDevice(0,0,0,0, model));
                     notifyDataSetChanged();
-                    break;
+                    return;
                 }
             }
+        }
+    }
+
+    private void handleDisconnection(List<ConnectedDeviceModel> connectedDeviceModels) {
+        ConnectedDeviceModel toBeRemove = null;
+        for (ConnectedDeviceModel model : connectedDeviceModels) {
+            if(!connectedDevices.contains(model)) {
+                toBeRemove = model;
+                break;
+            }
+        }
+
+        if (toBeRemove != null) {
+            removeModel(toBeRemove);
+            notifyDataSetChanged();
         }
 
     }
 
-    private void handleDisconnection(List<ConnectedDeviceModel> connectedDeviceModels) {
-        ConnectedDevice toBeRemove = null;
-        for (ConnectedDevice device : connectedDevices) {
-            for (ConnectedDeviceModel deviceModel : connectedDeviceModels) {
-                if (!deviceModel.getBody().getSerial().equals(device.getSerial())) {
+    private void removeModel(ConnectedDeviceModel model) {
+        if(model != null) {
+            ConnectedDevice toBeRemove = null;
+            for (ConnectedDevice device : connectedDevices) {
+                if(device.equals(model)) {
                     toBeRemove = device;
-                    notifyDataSetChanged();
                     break;
                 }
+
             }
-        }
-        if (toBeRemove != null) {
-            connectedDevices.remove(toBeRemove);
+            if(toBeRemove != null) {
+                connectedDevices.remove(toBeRemove);
+            }
         }
     }
 

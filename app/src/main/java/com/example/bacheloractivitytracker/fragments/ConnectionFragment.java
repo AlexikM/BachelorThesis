@@ -11,15 +11,20 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.adapters.ConnectionRecyclerAdapter;
 import com.example.bacheloractivitytracker.models.DeviceWrapper;
@@ -35,7 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class ConnectionFragment extends Fragment implements View.OnClickListener{
+public class ConnectionFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "ConnectionFragment";
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 98;
 
@@ -59,7 +64,6 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.fragment_connection, container, false);
         ButterKnife.bind(this, view);
         RxBle.Instance.initialize(getContext());
-
 
 
         initViewModel();
@@ -88,7 +92,7 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
     private void initLoadingToast() {
         lt = new LoadToast(getContext());
         //lt.setBackgroundColor(Color.rgb(0,0,0));
-        lt.setProgressColor(Color.rgb(27,226,254));
+        lt.setProgressColor(Color.rgb(27, 226, 254));
     }
 
 
@@ -155,13 +159,19 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
             public void onConnect(String s) {
                 //Called when Mds / Whiteboard link-layer connection (BLE) has been succesfully established
             }
+
             //s = macAddress
             //s1 = serial
             @Override
             public void onConnectionComplete(String s, String s1) {
                 //Called when the full Mds / Whiteboard connection has been succesfully established
-                lt.success();
-                navController.navigate(R.id.action_connectionFragment_to_dashboardFragment);
+                Log.d(TAG, "onConnectionComplete: CALLED");
+
+                //because of reconnection
+                if(navController.getCurrentDestination().getId() == R.id.connectionFragment) {
+                    lt.success();
+                    navController.navigate(R.id.action_connectionFragment_to_dashboardFragment);
+                }
             }
 
             @Override
