@@ -17,6 +17,7 @@ import com.movesense.mds.MdsSubscription;
 import java.util.Objects;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import lombok.Getter;
 
 public enum RxMds {
     Instance;
@@ -25,6 +26,8 @@ public enum RxMds {
 
     private Mds mMds;
     private Context context;
+
+    @Getter
     private Gson gson;
 
 
@@ -42,6 +45,7 @@ public enum RxMds {
                     new MdsNotificationListener() {
                         @Override
                         public void onNotification(String s) {
+                            Log.d(TAG, "onNotification: called" + s);
                             emitter.onNext(s);
                         }
 
@@ -50,12 +54,11 @@ public enum RxMds {
                             emitter.onError(e);
                         }
                     });
-
             emitter.setCancellable(subscription::unsubscribe);
         });
     }
 
-
+    //used for the connectedDevices
     public Observable<String> genericSubscribe(String uri) {
         Log.e(TAG, "subscribe: " + uri);
         return Observable.create((ObservableEmitter<String> emitter) -> {
@@ -91,6 +94,16 @@ public enum RxMds {
             return;
         }
         mMds.connect(macAddress, mdsConnectionListener);
+    }
+
+
+    ///API FOR ACC, GYRO, MAGNOTOMETER
+    public Observable<String> subscribeToHeartRate(String serial) {
+        return subscribe(serial, Path.URI_HR_PATH_SUB, "");
+    }
+
+    public Observable<String> subscribeToECG(String serial, String rate) {
+        return subscribe(serial, Path.URI_ECG_PATH_SUB, rate);
     }
 
 

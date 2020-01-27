@@ -3,7 +3,6 @@ package com.example.bacheloractivitytracker.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -12,8 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
+import com.example.bacheloractivitytracker.viewModels.DashboardFragmentViewModel;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -23,7 +26,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
     private List<ConnectedDevice> connectedDevices;
 
-    public DashboardRecyclerAdapter(LiveData<List<ConnectedDeviceModel>> changedConnectedDevices, LifecycleOwner owner) {
+    public DashboardRecyclerAdapter(LiveData<List<ConnectedDeviceModel>> changedConnectedDevices, LifecycleOwner owner, DashboardFragmentViewModel dashboardFragmentViewModel) {
         connectedDevices = new ArrayList<>();
         changedConnectedDevices.observe(owner, this::handleConnectivity);
 
@@ -44,8 +47,9 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
         holder.itemView.setTag(device);
         //TODO OPRAVIT TU
+        holder.heartRate.setText(String.format(Locale.getDefault(), "%.0f", device.getHeartRate()));
         holder.calories.setText(Integer.toString(device.getCalories()));
-        holder.heartRate.setText(Integer.toString(device.getHeartRate()));
+        //holder.heartRate.setText(Float.toString(device.getHeartRate()));
         holder.distance.setText(Integer.toString(device.getDistance()));
         holder.steps.setText(Integer.toString(device.getSteps()));
     }
@@ -55,20 +59,10 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         return connectedDevices.size();
     }
 
-//    private void handleDisconnect(String serial) {
-//        ConnectedDevice toBeRemove = null;
-//        for (ConnectedDevice device : connectedDevices) {
-//            if (serial.equals(device.getSerial())) {
-//                toBeRemove = device;
-//                break;
-//            }
-//        }
-//
-//        if(toBeRemove != null) {
-//            connectedDevices.remove(toBeRemove);
-//        }
-//    }
 
+
+
+    //----------CONNECTIVETY -------------//
     private void handleConnectivity(List<ConnectedDeviceModel> connectedDeviceModels) {
         int sizeModels = connectedDeviceModels.size();
         int connectedSize = connectedDevices.size();
@@ -86,7 +80,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         //called when the fragment is created or connected one device
         if(connectedDevices.size() == 0) {
             for(ConnectedDeviceModel device : connectedDeviceModels) {
-                connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, device));
+                connectedDevices.add(new ConnectedDevice(0, 0, 0, 0, device, this));
             }
             notifyDataSetChanged();
             return;
@@ -96,7 +90,7 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         for (ConnectedDeviceModel model : connectedDeviceModels) {
             for (ConnectedDevice device : connectedDevices) {
                 if(!device.getSerial().equals(model.getBody().getSerial())) {
-                    connectedDevices.add(new ConnectedDevice(0,0,0,0, model));
+                    connectedDevices.add(new ConnectedDevice(0,0,0,0, model, this));
                     notifyDataSetChanged();
                     return;
                 }
@@ -135,6 +129,8 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
             }
         }
     }
+
+
 
     class DashboardViewHolder extends RecyclerView.ViewHolder {
 

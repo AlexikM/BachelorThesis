@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +20,8 @@ import com.example.bacheloractivitytracker.MainActivity;
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.adapters.DashboardRecyclerAdapter;
 import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
+//import com.example.bacheloractivitytracker.repositories.SensorsDataRepositary;
+import com.example.bacheloractivitytracker.viewModels.DashboardFragmentViewModel;
 
 import java.util.List;
 
@@ -35,6 +38,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
     private DashboardRecyclerAdapter mAdapter;
     private NavController navController;
+    private DashboardFragmentViewModel mDashboardFragmentViewModel;
 
 
     @Nullable
@@ -43,6 +47,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         ButterKnife.bind(this, view);
 
+        initViewModel();
         initRecyclerView();
         initAddBtn();
 
@@ -56,6 +61,12 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         navController = Navigation.findNavController(view);
     }
 
+
+    private void initViewModel() {
+        mDashboardFragmentViewModel = ViewModelProviders.of(this).get(DashboardFragmentViewModel.class);
+
+    }
+
     private void initAddBtn() {
         addNewDevice.setOnClickListener(this);
 
@@ -63,7 +74,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
     private void initRecyclerView() {
         LiveData<List<ConnectedDeviceModel>> dataSet = ((MainActivity) getActivity()).getConnectedDevices();
-        mAdapter = new DashboardRecyclerAdapter(dataSet, this);
+        mAdapter = new DashboardRecyclerAdapter(dataSet, this, mDashboardFragmentViewModel);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
     }

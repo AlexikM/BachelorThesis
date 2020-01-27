@@ -103,7 +103,7 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
 
         //observing the liveData and if something change i am updating the adapter
         mConnectionFragmentViewModel.getScannedDevices().observe(this, deviceWrappers -> mAdapter.setDevicesScanned(deviceWrappers));
-    }
+}
 
 
     private boolean checkLocationPermissionIsGranted() {
