@@ -25,10 +25,12 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
 
 
     private List<ConnectedDevice> connectedDevices;
+    private View.OnClickListener onClickListener;
 
-    public DashboardRecyclerAdapter(LiveData<List<ConnectedDeviceModel>> changedConnectedDevices, LifecycleOwner owner, DashboardFragmentViewModel dashboardFragmentViewModel) {
+    public DashboardRecyclerAdapter(LiveData<List<ConnectedDeviceModel>> changedConnectedDevices, LifecycleOwner owner, View.OnClickListener onClickListener) {
         connectedDevices = new ArrayList<>();
         changedConnectedDevices.observe(owner, this::handleConnectivity);
+        this.onClickListener = onClickListener;
 
     }
 
@@ -52,6 +54,8 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         //holder.heartRate.setText(Float.toString(device.getHeartRate()));
         holder.distance.setText(Integer.toString(device.getDistance()));
         holder.steps.setText(Integer.toString(device.getSteps()));
+
+        holder.itemView.setOnClickListener(onClickListener);
     }
 
     @Override

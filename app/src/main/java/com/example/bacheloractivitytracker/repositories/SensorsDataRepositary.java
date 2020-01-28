@@ -1,18 +1,8 @@
 package com.example.bacheloractivitytracker.repositories;
 
-import android.util.Log;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.example.bacheloractivitytracker.RawDataModels.HeartRateModel;
 import com.example.bacheloractivitytracker.utils.RxMds;
-import com.google.gson.Gson;
 
 import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 public class SensorsDataRepositary {
     private static final String TAG = "SensorsDataRepositary";
@@ -29,6 +19,12 @@ public class SensorsDataRepositary {
     public Observable<String> subscribeToHeartRate(String serial) {
         return RxMds.Instance.subscribeToHeartRate(serial);
     }
+
+    public Observable<String> subscribeToAcc(String serial, String rate) {
+        return RxMds.Instance.subscribeToAcc(serial, rate);
+    }
+
+
 
 
 //    private void subscribeHeartRate(String serial) {

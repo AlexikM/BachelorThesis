@@ -1,8 +1,7 @@
-package com.example.bacheloractivitytracker.RawDataModels;
-
+package com.example.bacheloractivitytracker.rawDataModels;
 import com.google.gson.annotations.SerializedName;
-
 import lombok.Getter;
+
 
 @Getter
 public class HeartRateModel {

@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.NavHost;
@@ -83,7 +84,7 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
     private void initViewModel() {
         //TODO vyresit s permission, pokud mi ho neda tak to spadne a poprve to taky spadne coz je unlucky
         //Start scanning
-        mConnectionFragmentViewModel = ViewModelProviders.of(this).get(ConnectionFragmentViewModel.class);
+        mConnectionFragmentViewModel = new ViewModelProvider(this).get(ConnectionFragmentViewModel.class);
         mConnectionFragmentViewModel.init();
 
         mConnectionFragmentViewModel.startScan();
@@ -102,7 +103,7 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
         mRecyclerView.setAdapter(mAdapter);
 
         //observing the liveData and if something change i am updating the adapter
-        mConnectionFragmentViewModel.getScannedDevices().observe(this, deviceWrappers -> mAdapter.setDevicesScanned(deviceWrappers));
+        mConnectionFragmentViewModel.getScannedDevices().observe(getViewLifecycleOwner(), deviceWrappers -> mAdapter.setDevicesScanned(deviceWrappers));
 }
 
 

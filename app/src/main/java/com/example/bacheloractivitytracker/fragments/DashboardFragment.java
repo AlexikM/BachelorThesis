@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bacheloractivitytracker.MainActivity;
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.adapters.DashboardRecyclerAdapter;
+import com.example.bacheloractivitytracker.models.ConnectedDevice;
 import com.example.bacheloractivitytracker.models.ConnectedDeviceModel;
 //import com.example.bacheloractivitytracker.repositories.SensorsDataRepositary;
 import com.example.bacheloractivitytracker.viewModels.DashboardFragmentViewModel;
@@ -38,7 +40,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
     private DashboardRecyclerAdapter mAdapter;
     private NavController navController;
-    private DashboardFragmentViewModel mDashboardFragmentViewModel;
+    //private DashboardFragmentViewModel mDashboardFragmentViewModel;
 
 
     @Nullable
@@ -47,7 +49,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         ButterKnife.bind(this, view);
 
-        initViewModel();
+        //initViewModel();
         initRecyclerView();
         initAddBtn();
 
@@ -62,26 +64,28 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     }
 
 
-    private void initViewModel() {
-        mDashboardFragmentViewModel = ViewModelProviders.of(this).get(DashboardFragmentViewModel.class);
-
-    }
+//    private void initViewModel() {
+//        mDashboardFragmentViewModel = new ViewModelProvider(this).get(DashboardFragmentViewModel.class);
+//
+//    }
 
     private void initAddBtn() {
-        addNewDevice.setOnClickListener(this);
-
+        addNewDevice.setOnClickListener(v -> navController.navigate(R.id.action_dashboardFragment_to_connectionFragment));
     }
 
     private void initRecyclerView() {
         LiveData<List<ConnectedDeviceModel>> dataSet = ((MainActivity) getActivity()).getConnectedDevices();
-        mAdapter = new DashboardRecyclerAdapter(dataSet, this, mDashboardFragmentViewModel);
+        mAdapter = new DashboardRecyclerAdapter(dataSet, getViewLifecycleOwner(), this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onClick(View v) {
-        navController.navigate(R.id.action_dashboardFragment_to_connectionFragment);
-
+        ConnectedDevice device = (ConnectedDevice) v.getTag();
+        DashboardFragmentDirections.ActionDashboardFragmentToGraphViewFragment action =
+                DashboardFragmentDirections.actionDashboardFragmentToGraphViewFragment();
+        action.setSerial(device.getSerial());
+        navController.navigate(action);
     }
 }
