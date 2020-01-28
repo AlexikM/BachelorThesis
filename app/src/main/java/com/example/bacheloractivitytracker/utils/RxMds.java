@@ -12,11 +12,14 @@ import com.google.gson.GsonBuilder;
 import com.movesense.mds.Mds;
 import com.movesense.mds.MdsConnectionListener;
 import com.movesense.mds.MdsException;
+import com.movesense.mds.MdsHeader;
 import com.movesense.mds.MdsNotificationListener;
+import com.movesense.mds.MdsResponseListener;
 import com.movesense.mds.MdsSubscription;
 import java.util.Objects;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.Single;
 import lombok.Getter;
 
 public enum RxMds {
@@ -37,6 +40,24 @@ public enum RxMds {
         gson = new GsonBuilder().create();
     }
 
+    private Single<String> get(String serial, String uriPath) {
+        return Single.create(singleSubscriber -> {
+
+            String uri = Formatter.createGetUri(serial, uriPath);
+            mMds.get(uri, null, new MdsResponseListener() {
+                @Override
+                public void onError(MdsException e) {
+                    singleSubscriber.onError(e);
+                }
+
+                @Override
+                public void onSuccess(String data, MdsHeader header) {
+                    singleSubscriber.onSuccess(data);
+                }
+            });
+        });
+    }
+
 
     public Observable<String> subscribe(String serial, String uriPath, String rate) {
         Log.e(TAG, "subscribe: " + uriPath);
@@ -51,6 +72,7 @@ public enum RxMds {
 
                         @Override
                         public void onError(MdsException e) {
+                            Log.d(TAG, "onError: " + e);
                             emitter.onError(e);
                         }
                     });
@@ -105,6 +127,14 @@ public enum RxMds {
     public Observable<String> subscribeToECG(String serial, String rate) {
         return subscribe(serial, Path.URI_ECG_PATH_SUB, rate);
     }
+
+    public Observable<String> subscribeToAcc(String serial, String rate) {
+        return subscribe(serial, Path.URI_ACC_PATH_SUB, rate);
+    }
+
+
+
+
 
 
 

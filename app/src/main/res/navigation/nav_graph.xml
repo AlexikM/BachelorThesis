@@ -9,19 +9,52 @@
         android:id="@+id/connectionFragment"
         android:name="com.example.bacheloractivitytracker.fragments.ConnectionFragment"
         android:label="fragment_connection"
-        tools:layout="@layout/fragment_connection" >
+        tools:layout="@layout/fragment_connection">
+
         <action
             android:id="@+id/action_connectionFragment_to_dashboardFragment"
-            app:destination="@id/dashboardFragment" />
+
+            app:destination="@id/dashboardFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
     </fragment>
 
+    <!--TODO popUpToInclusive - po prvni connection kdyz da back je celkem problem tho ^^ -->
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.example.bacheloractivitytracker.fragments.DashboardFragment"
         android:label="fragment_dashboard"
-        tools:layout="@layout/fragment_dashboard" >
+        tools:layout="@layout/fragment_dashboard">
         <action
             android:id="@+id/action_dashboardFragment_to_connectionFragment"
-            app:destination="@id/connectionFragment" />
+
+            app:destination="@id/connectionFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_graphViewFragment"
+            app:destination="@id/graphViewFragment"
+
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/graphViewFragment"
+        android:name="com.example.bacheloractivitytracker.fragments.GraphViewFragment"
+        android:label="fragment_graph_view"
+        tools:layout="@layout/fragment_graph_view" >
+        <argument
+            android:name="serial"
+            app:argType="string"
+            android:defaultValue="none" />
     </fragment>
 </navigation>

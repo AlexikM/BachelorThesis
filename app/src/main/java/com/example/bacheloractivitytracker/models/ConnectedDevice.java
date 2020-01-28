@@ -3,20 +3,14 @@ package com.example.bacheloractivitytracker.models;
 
 import android.util.Log;
 
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-
-import com.example.bacheloractivitytracker.RawDataModels.HeartRateModel;
+import com.example.bacheloractivitytracker.rawDataModels.HeartRateModel;
 import com.example.bacheloractivitytracker.adapters.DashboardRecyclerAdapter;
-import com.example.bacheloractivitytracker.fragments.DashboardFragment;
 import com.example.bacheloractivitytracker.repositories.SensorsDataRepositary;
 import com.example.bacheloractivitytracker.utils.RxMds;
-import com.example.bacheloractivitytracker.viewModels.DashboardFragmentViewModel;
 
 import java.util.Objects;
 
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lombok.Getter;
 
 
