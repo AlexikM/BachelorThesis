@@ -134,6 +134,12 @@ public class DashboardRecyclerAdapter extends RecyclerView.Adapter<DashboardRecy
         }
     }
 
+    public void unsubscribeAll() {
+        for(ConnectedDevice device : connectedDevices) {
+            device.stopSubsHeartRate();
+        }
+    }
+
 
 
     class DashboardViewHolder extends RecyclerView.ViewHolder {

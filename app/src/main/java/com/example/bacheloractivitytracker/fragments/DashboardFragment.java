@@ -88,4 +88,17 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         action.setSerial(device.getSerial());
         navController.navigate(action);
     }
+
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mAdapter.unsubscribeAll();
+//
+//    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mAdapter.unsubscribeAll();
+    }
 }

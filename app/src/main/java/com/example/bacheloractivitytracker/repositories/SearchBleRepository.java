@@ -20,7 +20,6 @@ import io.reactivex.disposables.Disposable;
 public class SearchBleRepository {
     private static final String TAG = "SearchBleRepository";
 
-    //Scanning for the devices
     private static SearchBleRepository instance;
     private MutableLiveData<List<DeviceWrapper>> mDataSet = new MutableLiveData<>();
     private List<DeviceWrapper> mBleScanResultList = new ArrayList<>();
@@ -46,8 +45,8 @@ public class SearchBleRepository {
                 .subscribe(
                         scanResult -> {
                             // Process scan result here.
-                            long currentMilis = System.currentTimeMillis() / 1000;
-                            checkActiveDevices(currentMilis);
+                            long currentMillis = System.currentTimeMillis() / 1000;
+                            checkActiveDevices(currentMillis);
                             if (scanResult.getBleDevice() != null && scanResult.getBleDevice().getName() != null && scanResult.getBleDevice().getName().contains("Movesense")) {
                                 DeviceWrapper deviceWrapper = new DeviceWrapper(scanResult.getRssi(), scanResult.getBleDevice(), System.currentTimeMillis() / 1000);
                                 handleBleDevice(deviceWrapper);
@@ -87,8 +86,10 @@ public class SearchBleRepository {
 
     private void checkActiveDevices(Long currentTimestamp) {
         DeviceWrapper toRemove = null;
+        //in sec, how long the device can be non-updated
+        int maxDelay = 2;
         for (DeviceWrapper device : mBleScanResultList) {
-            if(currentTimestamp - device.getTimestamp() > 5) {
+            if(currentTimestamp - device.getTimestamp() > maxDelay) {
                 toRemove = device;
                 break;
             }

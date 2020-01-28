@@ -132,6 +132,10 @@ public enum RxMds {
         return subscribe(serial, Path.URI_ACC_PATH_SUB, rate);
     }
 
+    public Observable<String> subscribeToGyro(String serial, String rate) {
+        return subscribe(serial, Path.URI_GYRO_PATH_SUB, rate);
+    }
+
 
 
 
