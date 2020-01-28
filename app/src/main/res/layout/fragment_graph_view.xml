@@ -56,4 +56,18 @@
         android:id="@+id/linearAcc_lineChart"
         android:layout_width="match_parent"
         android:layout_height="250dp"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="reset"
+        android:id="@+id/reset">
+    </Button>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Unknown"
+        android:id="@+id/action_state"/>
 </LinearLayout>

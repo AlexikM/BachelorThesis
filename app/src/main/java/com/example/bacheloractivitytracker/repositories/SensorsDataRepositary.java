@@ -27,32 +27,4 @@ public class SensorsDataRepositary {
     public Observable<String> subscribeToGyro(String serial, String rate) {
         return RxMds.Instance.subscribeToGyro(serial, rate);
     }
-
-
-
-
-
-
-//    private void subscribeHeartRate(String serial) {
-//        mHrSubscription = (RxMds.Instance.subscribeToHeartRate(serial).subscribe(s -> {
-//            Log.d(TAG, "subscribeHeartRate: " + s);
-//            heartRate.setValue(RxMds.Instance.getGson().fromJson(s, HeartRateModel.class));
-//        }, throwable -> {
-//            Log.d(TAG, "subscribeHeartRate: " + throwable);
-//            mHrSubscription.dispose();
-//        }));
-//    }
-//
-//    public void unsubscriteHeartRate() {
-//        mHrSubscription.dispose();
-//    }
-//
-//    public MutableLiveData<HeartRateModel> getHeartRate(String serial) {
-//        if (mHrSubscription == null || mHrSubscription.isDisposed()) {
-//            subscribeHeartRate(serial);
-//       }
-//        return heartRate;
-//    }
-
-
 }

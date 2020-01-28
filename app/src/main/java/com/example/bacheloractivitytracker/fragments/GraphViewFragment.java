@@ -39,7 +39,8 @@ import io.reactivex.functions.Consumer;
 
 public class GraphViewFragment extends Fragment {
     private static final String TAG = "GraphViewFragment";
-    private final Double DELTATIME = 0.076923076923077;
+    private final float[] CONSTANTS = {9.9f, 10.8f, 14.2f, 15f, 18f};
+    private final String[] STATES = {"Standing", "Walking", "Slow jogging", "Jogging", "Fast run"};
 
     @BindView(R.id.linearAcc_lineChart)
     LineChart mChart;
@@ -61,14 +62,26 @@ public class GraphViewFragment extends Fragment {
     //test
     private long streakStartTime;
     private long streakPrevTime;
+
+    private Long standingStartTime;
+
     private static final int ABOVE = 1;
     private static final int BELOW = 0;
     private static int CURRENT_STATE = BELOW;
     private static int PREVIOUS_STATE = BELOW;
     private int stepCount = 0;
+    private float sampleHistory = 0;
+    private int counter = 0;
+
 
     @BindView(R.id.steps_value)
     TextView stepView;
+
+    @BindView(R.id.reset)
+    Button reset;
+
+    @BindView(R.id.action_state)
+    TextView actionState;
 
     @Nullable
     @Override
@@ -77,6 +90,13 @@ public class GraphViewFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         initGraph();
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stepCount = 0;
+            }
+        });
 
         return view;
     }
@@ -110,16 +130,16 @@ public class GraphViewFragment extends Fragment {
             LineData mLineData = mChart.getData();
 
             ILineDataSet xSet = mLineData.getDataSetByIndex(0);
-            ILineDataSet ySet = mLineData.getDataSetByIndex(1);
-            ILineDataSet zSet = mLineData.getDataSetByIndex(2);
+            //ILineDataSet ySet = mLineData.getDataSetByIndex(1);
+            //ILineDataSet zSet = mLineData.getDataSetByIndex(2);
 
             if (xSet == null) {
                 xSet = createSet("Data x", getResources().getColor(android.R.color.holo_red_dark));
-                ySet = createSet("Data y", getResources().getColor(android.R.color.holo_green_dark));
-                zSet = createSet("Data z", getResources().getColor(android.R.color.holo_blue_dark));
+                //ySet = createSet("Data y", getResources().getColor(android.R.color.holo_green_dark));
+                //zSet = createSet("Data z", getResources().getColor(android.R.color.holo_blue_dark));
                 mLineData.addDataSet(xSet);
-                mLineData.addDataSet(ySet);
-                mLineData.addDataSet(zSet);
+                //mLineData.addDataSet(ySet);
+                //mLineData.addDataSet(zSet);
             }
 
 
@@ -140,7 +160,10 @@ public class GraphViewFragment extends Fragment {
 
                 prev = lowPassFilter(avgResult, prev);
 
-                handleStepDetection(prev);
+                float tmp = (float) Math.sqrt(prev[0] * prev[0] + prev[1] * prev[1] + prev[2] * prev[2]);
+
+                handleStepDetection(tmp);
+
 //
 //                float x = (float) arrayModel.getX() - prev[0];
 //                float y = (float) arrayModel.getY() - prev[1];
@@ -164,11 +187,11 @@ public class GraphViewFragment extends Fragment {
 
 
                 xAxis.setText(String.format(Locale.getDefault(),
-                        "x: %.6f", prev[0]));
-                yAxis.setText(String.format(Locale.getDefault(),
-                        "y: %.6f", prev[1]));
-                zAxis.setText(String.format(Locale.getDefault(),
-                        "z: %.6f", prev[2]));
+                        "x: %.6f", tmp));
+//                yAxis.setText(String.format(Locale.getDefault(),
+//                        "y: %.6f", prev[1]));
+//                zAxis.setText(String.format(Locale.getDefault(),
+//                        "z: %.6f", prev[2]));
 
 //                mLineData.addEntry(new Entry(timestamp / 100, x), 0);
 //                mLineData.addEntry(new Entry(timestamp / 100, y), 1);
@@ -178,9 +201,9 @@ public class GraphViewFragment extends Fragment {
 //                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getY()), 1);
 //                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getZ()), 2);
 //
-                mLineData.addEntry(new Entry(timestamp / 100, prev[0]), 0);
-                mLineData.addEntry(new Entry(timestamp / 100, prev[1]), 1);
-                mLineData.addEntry(new Entry(timestamp / 100, prev[2]), 2);
+                mLineData.addEntry(new Entry(timestamp / 100, tmp), 0);
+                //mLineData.addEntry(new Entry(timestamp / 100, prev[1]), 1);
+                //mLineData.addEntry(new Entry(timestamp / 100, prev[2]), 2);
                 mLineData.notifyDataChanged();
 
 
@@ -224,7 +247,7 @@ public class GraphViewFragment extends Fragment {
 
     //TODO mozna later on zkusit znovu pocitat rychlost?  s timhle by to mozna nejak slo idk
     private float[] lowPassFilter(float[] input, float[] prev) {
-        float ALPHA = 0.5f;
+        float ALPHA = 0.6f;
         if (input == null || prev == null) {
             return null;
         }
@@ -251,10 +274,18 @@ public class GraphViewFragment extends Fragment {
         return result;
     }
 
-    private void handleStepDetection(float[] data) {
-        float y = data[1];
+    //running 12f
+    //walking 10.5
 
-        if (y > 12f) {
+    //9.9 standing
+    //walking 10.8f
+    //slow jogging 14.2
+    //jogging 15
+    //fast run 18
+    //TODO zefektvnit tuhle funkci setText nemusi byt tak kde je, if if podminka muze byt predelana na if podminku
+    private void handleStepDetection(float r) {
+        if (r >= 10.8f) {
+            handleActivityState(r);
             CURRENT_STATE = ABOVE;
             if (PREVIOUS_STATE != CURRENT_STATE) {
                 streakStartTime = System.currentTimeMillis();
@@ -265,16 +296,46 @@ public class GraphViewFragment extends Fragment {
                 streakPrevTime = streakStartTime;
                 Log.d("STATES:", "" + streakPrevTime + " " + streakStartTime);
                 stepCount++;
+                standingStartTime = null;
             }
             PREVIOUS_STATE = CURRENT_STATE;
-        } else if (y < 12f) {
+        } else if (r < 10.8f) {
+            if (standingStartTime == null) {
+                standingStartTime = System.currentTimeMillis();
+            } else if (System.currentTimeMillis() - standingStartTime > 4000f) {
+                actionState.setText(STATES[0]);
+            }
             CURRENT_STATE = BELOW;
             PREVIOUS_STATE = CURRENT_STATE;
         }
         stepView.setText("steps: " + (stepCount));
-
     }
 
+    private void handleActivityState(float r) {
+        if (counter == 15) {
+            float avg = sampleHistory / 15;
+            int result = closestValue(avg);
+            actionState.setText(STATES[result]);
 
+            counter = 0;
+            sampleHistory = 0f;
+        } else {
+            sampleHistory += r;
+            counter++;
+        }
+    }
+
+    private int closestValue(float number) {
+        float min = Math.abs(CONSTANTS[0] - number);
+        int idx = 0;
+        for (int c = 1; c < CONSTANTS.length; c++) {
+            float newMin = Math.abs(CONSTANTS[c] - number);
+            if (newMin < min) {
+                idx = c;
+                min = newMin;
+            }
+        }
+        return idx;
+    }
 }
 
