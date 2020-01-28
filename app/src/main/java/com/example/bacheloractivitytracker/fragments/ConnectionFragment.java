@@ -138,13 +138,19 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
         }
     }
 
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        Log.d(TAG, "onDestroy called");
+//        mConnectionFragmentViewModel.stopScan();
+//    }
+
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy called");
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "onDestroyView: called");
         mConnectionFragmentViewModel.stopScan();
     }
-
 
     @Override
     public void onClick(View v) {
@@ -159,6 +165,7 @@ public class ConnectionFragment extends Fragment implements View.OnClickListener
             @Override
             public void onConnect(String s) {
                 //Called when Mds / Whiteboard link-layer connection (BLE) has been succesfully established
+                Log.d(TAG, "onConnect: "+ s);
             }
 
             //s = macAddress

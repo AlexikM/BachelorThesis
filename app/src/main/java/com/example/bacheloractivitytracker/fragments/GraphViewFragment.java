@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.bacheloractivitytracker.R;
+import com.example.bacheloractivitytracker.models.Vector3D;
 import com.example.bacheloractivitytracker.rawDataModels.AngularVelocityModel;
 import com.example.bacheloractivitytracker.rawDataModels.ArrayModel;
 import com.example.bacheloractivitytracker.rawDataModels.LinearAccelerationModel;
@@ -37,6 +39,7 @@ import io.reactivex.functions.Consumer;
 
 public class GraphViewFragment extends Fragment {
     private static final String TAG = "GraphViewFragment";
+    private final Double DELTATIME = 0.076923076923077;
 
     @BindView(R.id.linearAcc_lineChart)
     LineChart mChart;
@@ -54,6 +57,18 @@ public class GraphViewFragment extends Fragment {
     private Disposable mSubscribeAcc;
     private String serial;
     private float[] prev = {0f, 0f, 0f};
+
+    //test
+    private long streakStartTime;
+    private long streakPrevTime;
+    private static final int ABOVE = 1;
+    private static final int BELOW = 0;
+    private static int CURRENT_STATE = BELOW;
+    private static int PREVIOUS_STATE = BELOW;
+    private int stepCount = 0;
+
+    @BindView(R.id.steps_value)
+    TextView stepView;
 
     @Nullable
     @Override
@@ -108,20 +123,29 @@ public class GraphViewFragment extends Fragment {
             }
 
 
-            mSubscribeAcc = SensorsDataRepositary.getInstance().subscribeToAcc(serial, "13").subscribe(s -> {
+            mSubscribeAcc = SensorsDataRepositary.getInstance().subscribeToAcc(serial, "26").subscribe(s -> {
                 Log.d(TAG, "onCheckedChange: " + s);
 
                 LinearAccelerationModel result = RxMds.Instance.getGson().fromJson(s, LinearAccelerationModel.class);
 
                 //TODO IF jestli result neni null
 
+//                ArrayModel arrayModel = result.getBody().getArray()[0];
+////                ArrayModel arrayModel1 = result.getBody().getArray()[1];
 
-                ArrayModel arrayModel = result.getBody().getArray()[0];
+                float[] avgResult = avgResult(result);
+
+
                 float timestamp = result.getBody().getTimestamp();
-                Log.d(TAG, "onCheckedChange: " + arrayModel.getX());
 
-                float[] tmp = {(float) arrayModel.getX(), (float) arrayModel.getY(), (float) arrayModel.getZ()};
-                prev = lowPassFilter(tmp, prev);
+                prev = lowPassFilter(avgResult, prev);
+
+                handleStepDetection(prev);
+//
+//                float x = (float) arrayModel.getX() - prev[0];
+//                float y = (float) arrayModel.getY() - prev[1];
+//                float z = (float) arrayModel.getZ() - prev[2];
+//                float r = (float) Math.sqrt(x*x + y*y + z*z);
 
 
 //                xAxis.setText(String.format(Locale.getDefault(),
@@ -131,6 +155,14 @@ public class GraphViewFragment extends Fragment {
 //                zAxis.setText(String.format(Locale.getDefault(),
 //                        "z: %.6f", arrayModel.getZ()));
 
+//                xAxis.setText(String.format(Locale.getDefault(),
+//                        "x: %.6f", x));
+//                yAxis.setText(String.format(Locale.getDefault(),
+//                        "y: %.6f", y));
+//                zAxis.setText(String.format(Locale.getDefault(),
+//                        "z: %.6f", z));
+
+
                 xAxis.setText(String.format(Locale.getDefault(),
                         "x: %.6f", prev[0]));
                 yAxis.setText(String.format(Locale.getDefault(),
@@ -138,10 +170,14 @@ public class GraphViewFragment extends Fragment {
                 zAxis.setText(String.format(Locale.getDefault(),
                         "z: %.6f", prev[2]));
 
+//                mLineData.addEntry(new Entry(timestamp / 100, x), 0);
+//                mLineData.addEntry(new Entry(timestamp / 100, y), 1);
+//                mLineData.addEntry(new Entry(timestamp / 100, z), 2);
+
 //                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getX()), 0);
 //                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getY()), 1);
 //                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getZ()), 2);
-
+//
                 mLineData.addEntry(new Entry(timestamp / 100, prev[0]), 0);
                 mLineData.addEntry(new Entry(timestamp / 100, prev[1]), 1);
                 mLineData.addEntry(new Entry(timestamp / 100, prev[2]), 2);
@@ -186,9 +222,9 @@ public class GraphViewFragment extends Fragment {
         return set;
     }
 
-    //test
+    //TODO mozna later on zkusit znovu pocitat rychlost?  s timhle by to mozna nejak slo idk
     private float[] lowPassFilter(float[] input, float[] prev) {
-        float ALPHA = 0.1f;
+        float ALPHA = 0.5f;
         if (input == null || prev == null) {
             return null;
         }
@@ -197,5 +233,48 @@ public class GraphViewFragment extends Fragment {
         }
         return prev;
     }
+
+//    private void updateVelocity(Vector3D acceleration) {
+//        acceleration.multiplyByScalar(DELTATIME);
+//        v0.add(acceleration);
+//    }
+
+    private float[] avgResult(LinearAccelerationModel accelerationModel) {
+        ArrayModel model1 = accelerationModel.getBody().getArray()[0];
+        ArrayModel model2 = accelerationModel.getBody().getArray()[1];
+
+        float x = (float) ((model1.getX() + model2.getX()) / 2);
+        float y = (float) ((model1.getY() + model2.getY()) / 2);
+        float z = (float) ((model1.getZ() + model2.getZ()) / 2);
+
+        float[] result = {x, y, z};
+        return result;
+    }
+
+    private void handleStepDetection(float[] data) {
+        float y = data[1];
+
+        if (y > 12f) {
+            CURRENT_STATE = ABOVE;
+            if (PREVIOUS_STATE != CURRENT_STATE) {
+                streakStartTime = System.currentTimeMillis();
+                if ((streakStartTime - streakPrevTime) <= 250f) {
+                    streakPrevTime = System.currentTimeMillis();
+                    return;
+                }
+                streakPrevTime = streakStartTime;
+                Log.d("STATES:", "" + streakPrevTime + " " + streakStartTime);
+                stepCount++;
+            }
+            PREVIOUS_STATE = CURRENT_STATE;
+        } else if (y < 12f) {
+            CURRENT_STATE = BELOW;
+            PREVIOUS_STATE = CURRENT_STATE;
+        }
+        stepView.setText("steps: " + (stepCount));
+
+    }
+
+
 }
 

@@ -24,6 +24,12 @@ public class SensorsDataRepositary {
         return RxMds.Instance.subscribeToAcc(serial, rate);
     }
 
+    public Observable<String> subscribeToGyro(String serial, String rate) {
+        return RxMds.Instance.subscribeToGyro(serial, rate);
+    }
+
+
+
 
 
 
