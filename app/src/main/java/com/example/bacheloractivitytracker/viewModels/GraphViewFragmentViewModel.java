@@ -28,6 +28,7 @@ public class GraphViewFragmentViewModel extends ViewModel {
 
     private MutableLiveData<StepBundle> mStepBundle;
     private int stepCount = 0;
+    private float distance = 0;
     private float mMagnitude;
     private float mTimestamp;
     private String mState;
@@ -58,6 +59,7 @@ public class GraphViewFragmentViewModel extends ViewModel {
             mRepo = new SensorsDataRepositary();
         }
         this.serial = serial;
+        this.mState = "unknown";
     }
 
 
@@ -75,7 +77,7 @@ public class GraphViewFragmentViewModel extends ViewModel {
             float magnitude = (float) Math.sqrt(prev[0] * prev[0] + prev[1] * prev[1] + prev[2] * prev[2]);
             mMagnitude = (magnitude);
             handleStepDetection(magnitude);
-            mStepBundle.setValue(new StepBundle(stepCount, mState, mMagnitude, mTimestamp));
+            mStepBundle.setValue(new StepBundle(stepCount, mState, mMagnitude, mTimestamp, distance));
 
         }, throwable -> {
             Log.d(TAG, "accept: " + throwable);
@@ -94,8 +96,6 @@ public class GraphViewFragmentViewModel extends ViewModel {
     }
 
 
-    //running 12f
-    //walking 10.5
     //9.9 standing
     //walking 10.8f
     //slow jogging 14.2
@@ -115,6 +115,7 @@ public class GraphViewFragmentViewModel extends ViewModel {
                 streakPrevTime = streakStartTime;
                 Log.d("STATES:", "" + streakPrevTime + " " + streakStartTime);
                 stepCount++;
+                handleDistance();
                 standingStartTime = null;
             }
             PREVIOUS_STATE = CURRENT_STATE;
@@ -165,36 +166,15 @@ public class GraphViewFragmentViewModel extends ViewModel {
         return mStepBundle;
     }
 
+    public void reset() {
+        stepCount = 0;
+    }
 
-//    public LiveData<Integer> getStepCounter() {
-//        if (mStepCounter == null) {
-//            mStepCounter = new MutableLiveData<>();
-//            mState = new MutableLiveData<>();
-//            mMagnitude = new MutableLiveData<>();
-//            mTimestamp = new MutableLiveData<>();
-//            subscribeToSteps();
-//        }
-//        return mStepCounter;
-//    }
-//
-//    public LiveData<String> getState() {
-//        if (mStepCounter == null) {
-//            getStepCounter();
-//        }
-//        return mState;
-//    }
-//
-//    public LiveData<Float> getMagnitute() {
-//        if(mStepCounter == null) {
-//            getStepCounter();
-//        }
-//        return mMagnitude;
-//    }
-//
-//    public LiveData<Float> getTimestamp() {
-//        if (mStepCounter == null) {
-//            getStepCounter();
-//        }
-//        return mTimestamp;
-//    }
+    private void handleDistance() {
+        //for now hard coded 0.75 but later on we will judge by gender and weight and height
+        distance += 0.75;
+
+    }
+
+
 }

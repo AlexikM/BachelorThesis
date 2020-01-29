@@ -70,4 +70,10 @@
         android:layout_height="wrap_content"
         android:text="Unknown"
         android:id="@+id/action_state"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Distance: "
+        android:id="@+id/distance_value"/>
 </LinearLayout>

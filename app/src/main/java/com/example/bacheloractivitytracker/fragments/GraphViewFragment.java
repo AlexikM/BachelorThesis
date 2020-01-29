@@ -20,12 +20,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.bacheloractivitytracker.R;
 import com.example.bacheloractivitytracker.models.StepBundle;
-import com.example.bacheloractivitytracker.models.Vector3D;
-import com.example.bacheloractivitytracker.rawDataModels.AngularVelocityModel;
-import com.example.bacheloractivitytracker.rawDataModels.ArrayModel;
-import com.example.bacheloractivitytracker.rawDataModels.LinearAccelerationModel;
-import com.example.bacheloractivitytracker.repositories.SensorsDataRepositary;
-import com.example.bacheloractivitytracker.utils.RxMds;
 import com.example.bacheloractivitytracker.viewModels.GraphViewFragmentViewModel;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
@@ -39,8 +33,6 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 public class GraphViewFragment extends Fragment {
     private static final String TAG = "GraphViewFragment";
@@ -68,6 +60,9 @@ public class GraphViewFragment extends Fragment {
     @BindView(R.id.action_state)
     TextView actionState;
 
+    @BindView(R.id.distance_value)
+    TextView distanceView;
+
     private GraphViewFragmentViewModel graphViewFragmentViewModel;
     private LiveData<StepBundle> mStepBundle;
     private Observer mStepObserver;
@@ -81,12 +76,16 @@ public class GraphViewFragment extends Fragment {
 
         initGraph();
 
-//        reset.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                stepCount = 0;
-//            }
-//        });
+        //TMP VECI - ORPAVIT
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                graphViewFragmentViewModel.reset();
+            }
+        });
+
+        actionState.setText("unknown");
 
         return view;
     }
@@ -125,32 +124,21 @@ public class GraphViewFragment extends Fragment {
                 return;
             }
 
-            LineData mLineData = mChart.getData();
-
-            ILineDataSet xSet = mLineData.getDataSetByIndex(0);
-            //ILineDataSet ySet = mLineData.getDataSetByIndex(1);
-            //ILineDataSet zSet = mLineData.getDataSetByIndex(2);
-
-            if (xSet == null) {
-                xSet = createSet("Data x", getResources().getColor(android.R.color.holo_red_dark));
-                //ySet = createSet("Data y", getResources().getColor(android.R.color.holo_green_dark));
-                //zSet = createSet("Data z", getResources().getColor(android.R.color.holo_blue_dark));
-                mLineData.addDataSet(xSet);
-                //mLineData.addDataSet(ySet);
-                //mLineData.addDataSet(zSet);
-            }
+            LineData mLineData = initChart();
 
             mStepBundle = graphViewFragmentViewModel.getStepBundle();
             mStepObserver = (Observer<StepBundle>) stepBundle -> {
                 String state = stepBundle.getState();
                 float timestamp = stepBundle.getTimestamp();
-                float magnitude = stepBundle.getMagnitute();
+                float magnitude = stepBundle.getMagnitude();
                 int steps = stepBundle.getSteps();
+                float distance = stepBundle.getDistance();
 
                 stepView.setText(String.format(Locale.getDefault(), "steps: %d", steps));
                 xAxis.setText(String.format(Locale.getDefault(),
                         "x: %.6f", magnitude));
                 actionState.setText(state);
+                distanceView.setText(String.format(Locale.getDefault(), "Distance: %.2f", distance));
 
 
                 mLineData.addEntry(new Entry(timestamp / 100, magnitude), 0);
@@ -167,95 +155,7 @@ public class GraphViewFragment extends Fragment {
                 mChart.moveViewToX(timestamp / 100);
             };
 
-
             mStepBundle.observe(this, mStepObserver);
-
-//            mSubscribeAcc = SensorsDataRepositary.getInstance().subscribeToAcc(serial, "26").subscribe(s -> {
-//                Log.d(TAG, "onCheckedChange: " + s);
-//
-//                LinearAccelerationModel result = RxMds.Instance.getGson().fromJson(s, LinearAccelerationModel.class);
-//
-//                //TODO IF jestli result neni null
-//
-////                ArrayModel arrayModel = result.getBody().getArray()[0];
-//////                ArrayModel arrayModel1 = result.getBody().getArray()[1];
-//
-//                float[] avgResult = avgResult(result);
-//
-//
-//                float timestamp = result.getBody().getTimestamp();
-//
-//                prev = lowPassFilter(avgResult, prev);
-//
-//                float tmp = (float) Math.sqrt(prev[0] * prev[0] + prev[1] * prev[1] + prev[2] * prev[2]);
-//
-//                handleStepDetection(tmp);
-//
-////
-////                float x = (float) arrayModel.getX() - prev[0];
-////                float y = (float) arrayModel.getY() - prev[1];
-////                float z = (float) arrayModel.getZ() - prev[2];
-////                float r = (float) Math.sqrt(x*x + y*y + z*z);
-//
-//
-////                xAxis.setText(String.format(Locale.getDefault(),
-////                        "x: %.6f", arrayModel.getX()));
-////                yAxis.setText(String.format(Locale.getDefault(),
-////                        "y: %.6f", arrayModel.getY()));
-////                zAxis.setText(String.format(Locale.getDefault(),
-////                        "z: %.6f", arrayModel.getZ()));
-//
-////                xAxis.setText(String.format(Locale.getDefault(),
-////                        "x: %.6f", x));
-////                yAxis.setText(String.format(Locale.getDefault(),
-////                        "y: %.6f", y));
-////                zAxis.setText(String.format(Locale.getDefault(),
-////                        "z: %.6f", z));
-//
-//
-//                xAxis.setText(String.format(Locale.getDefault(),
-//                        "x: %.6f", tmp));
-////                yAxis.setText(String.format(Locale.getDefault(),
-////                        "y: %.6f", prev[1]));
-////                zAxis.setText(String.format(Locale.getDefault(),
-////                        "z: %.6f", prev[2]));
-//
-////                mLineData.addEntry(new Entry(timestamp / 100, x), 0);
-////                mLineData.addEntry(new Entry(timestamp / 100, y), 1);
-////                mLineData.addEntry(new Entry(timestamp / 100, z), 2);
-//
-////                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getX()), 0);
-////                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getY()), 1);
-////                mLineData.addEntry(new Entry(timestamp / 100, (float) arrayModel.getZ()), 2);
-////
-//                mLineData.addEntry(new Entry(timestamp / 100, tmp), 0);
-//                //mLineData.addEntry(new Entry(timestamp / 100, prev[1]), 1);
-//                //mLineData.addEntry(new Entry(timestamp / 100, prev[2]), 2);
-//                mLineData.notifyDataChanged();
-//
-//
-//                // let the chart know it's data has changed
-//                mChart.notifyDataSetChanged();
-//
-//                // limit the number of visible entries
-//                mChart.setVisibleXRangeMaximum(50);
-//
-//                // move to the latest entry
-//                mChart.moveViewToX(timestamp / 100);
-
-//
-//            }, throwable -> {
-//                Log.d(TAG, "onCheckedChange: " + throwable);
-//                if (mSubscribeAcc != null) {
-//                    mSubscribeAcc.dispose();
-//                    buttonView.setChecked(false);
-//                }
-//            });
-//
-//
-//        } else {
-//            mSubscribeAcc.dispose();
-//        }
         } else {
             if (mStepBundle != null && mStepObserver != null) {
                 mStepBundle.removeObserver(mStepObserver);
@@ -264,6 +164,23 @@ public class GraphViewFragment extends Fragment {
         }
     }
 
+    private LineData initChart() {
+        LineData mLineData = mChart.getData();
+
+        ILineDataSet xSet = mLineData.getDataSetByIndex(0);
+        //ILineDataSet ySet = mLineData.getDataSetByIndex(1);
+        //ILineDataSet zSet = mLineData.getDataSetByIndex(2);
+
+        if (xSet == null) {
+            xSet = createSet("Data x", getResources().getColor(android.R.color.holo_red_dark));
+            //ySet = createSet("Data y", getResources().getColor(android.R.color.holo_green_dark));
+            //zSet = createSet("Data z", getResources().getColor(android.R.color.holo_blue_dark));
+            mLineData.addDataSet(xSet);
+            //mLineData.addDataSet(ySet);
+            //mLineData.addDataSet(zSet);
+        }
+        return mLineData;
+    }
 
     private LineDataSet createSet(String name, int color) {
         LineDataSet set = new LineDataSet(null, name);

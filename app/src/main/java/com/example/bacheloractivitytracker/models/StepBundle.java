@@ -9,13 +9,15 @@ public class StepBundle {
 
     private int steps;
     private String state;
-    private float magnitute;
+    private float magnitude;
     private float timestamp;
+    private float distance;
 
-    public StepBundle(int steps, String state, float magnitute, float timestamp) {
+    public StepBundle(int steps, String state, float magnitude, float timestamp, float distance) {
         this.steps = steps;
         this.state = state;
-        this.magnitute = magnitute;
+        this.magnitude = magnitude;
         this.timestamp = timestamp;
+        this.distance = distance;
     }
 }
