@@ -17,6 +17,7 @@ public class DataSmoothing {
         return new float[]{x, y, z};
     }
 
+    //TODO mozna later on zkusit znovu pocitat rychlost?  s timhle by to mozna nejak slo idk
     public static float[] lowPassFilter(float[] input, float[] prev) {
         float ALPHA = 0.6f;
         if (input == null || prev == null) {

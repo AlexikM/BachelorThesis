@@ -2,16 +2,17 @@ package com.example.bacheloractivitytracker.viewModels;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.bacheloractivitytracker.models.StepBundle;
 import com.example.bacheloractivitytracker.rawDataModels.LinearAccelerationModel;
 import com.example.bacheloractivitytracker.repositories.SensorsDataRepositary;
 import com.example.bacheloractivitytracker.utils.DataSmoothing;
 import com.example.bacheloractivitytracker.utils.RxMds;
 
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 public class GraphViewFragmentViewModel extends ViewModel {
     private static final String TAG = "GraphViewFragViewModel";
@@ -19,10 +20,17 @@ public class GraphViewFragmentViewModel extends ViewModel {
     private final float[] CONSTANTS = {9.9f, 10.8f, 14.2f, 15f, 18f};
     private final String[] STATES = {"Standing", "Walking", "Slow jogging", "Jogging", "Fast run"};
 
-    private MutableLiveData<Integer> mStepCounter;
-    private MutableLiveData<String> mState;
-    private MutableLiveData<Float> mMagnitute;
-    private MutableLiveData<Float> mTimestamp;
+
+//    private MutableLiveData<Integer> mStepCounter;
+//    private MutableLiveData<String> mState;
+//    private MutableLiveData<Float> mMagnitude;
+//    private MutableLiveData<Float> mTimestamp;
+
+    private MutableLiveData<StepBundle> mStepBundle;
+    private int stepCount = 0;
+    private float mMagnitude;
+    private float mTimestamp;
+    private String mState;
 
 
     private Disposable mAccelerationSubscription;
@@ -40,7 +48,6 @@ public class GraphViewFragmentViewModel extends ViewModel {
     private static final int BELOW = 0;
     private static int CURRENT_STATE = BELOW;
     private static int PREVIOUS_STATE = BELOW;
-    private int stepCount = 0;
     private float sampleHistory = 0;
     private int counter = 0;
     private float[] prev = {0f, 0f, 0f};
@@ -51,10 +58,6 @@ public class GraphViewFragmentViewModel extends ViewModel {
             mRepo = new SensorsDataRepositary();
         }
         this.serial = serial;
-        mStepCounter = new MutableLiveData<>();
-        mState = new MutableLiveData<>();
-        mMagnitute = new MutableLiveData<>();
-        mTimestamp = new MutableLiveData<>();
     }
 
 
@@ -62,7 +65,7 @@ public class GraphViewFragmentViewModel extends ViewModel {
         mAccelerationSubscription = SensorsDataRepositary.getInstance().subscribeToAcc(serial, "26").subscribe(s -> {
             LinearAccelerationModel result = RxMds.Instance.getGson().fromJson(s, LinearAccelerationModel.class);
 
-            mTimestamp.setValue((float) result.getBody().getTimestamp());
+            mTimestamp = ((float) result.getBody().getTimestamp());
 
             //smoothing the data
             float[] avgData = DataSmoothing.avgData(result);
@@ -70,8 +73,9 @@ public class GraphViewFragmentViewModel extends ViewModel {
 
             //magnitude
             float magnitude = (float) Math.sqrt(prev[0] * prev[0] + prev[1] * prev[1] + prev[2] * prev[2]);
-            mMagnitute.setValue(magnitude);
+            mMagnitude = (magnitude);
             handleStepDetection(magnitude);
+            mStepBundle.setValue(new StepBundle(stepCount, mState, mMagnitude, mTimestamp));
 
         }, throwable -> {
             Log.d(TAG, "accept: " + throwable);
@@ -82,16 +86,16 @@ public class GraphViewFragmentViewModel extends ViewModel {
         });
     }
 
-    private void stopSubToSteps() {
+    public void stopSubToSteps() {
         if (mAccelerationSubscription != null) {
             mAccelerationSubscription.dispose();
+            mStepBundle = null;
         }
     }
 
 
     //running 12f
     //walking 10.5
-
     //9.9 standing
     //walking 10.8f
     //slow jogging 14.2
@@ -111,7 +115,6 @@ public class GraphViewFragmentViewModel extends ViewModel {
                 streakPrevTime = streakStartTime;
                 Log.d("STATES:", "" + streakPrevTime + " " + streakStartTime);
                 stepCount++;
-                mStepCounter.setValue(stepCount);
                 standingStartTime = null;
             }
             PREVIOUS_STATE = CURRENT_STATE;
@@ -119,7 +122,7 @@ public class GraphViewFragmentViewModel extends ViewModel {
             if (standingStartTime == null) {
                 standingStartTime = System.currentTimeMillis();
             } else if (System.currentTimeMillis() - standingStartTime > 4000f) {
-                mState.setValue(STATES[0]);
+                mState = (STATES[0]);
             }
             CURRENT_STATE = BELOW;
             PREVIOUS_STATE = CURRENT_STATE;
@@ -131,7 +134,7 @@ public class GraphViewFragmentViewModel extends ViewModel {
         if (counter == 15) {
             float avg = sampleHistory / 15;
             int result = closestValue(avg);
-            mState.setValue(STATES[result]);
+            mState = (STATES[result]);
 
             counter = 0;
             sampleHistory = 0f;
@@ -154,5 +157,44 @@ public class GraphViewFragmentViewModel extends ViewModel {
         return idx;
     }
 
+    public LiveData<StepBundle> getStepBundle() {
+        if (mStepBundle == null) {
+            mStepBundle = new MutableLiveData<>();
+            subscribeToSteps();
+        }
+        return mStepBundle;
+    }
 
+
+//    public LiveData<Integer> getStepCounter() {
+//        if (mStepCounter == null) {
+//            mStepCounter = new MutableLiveData<>();
+//            mState = new MutableLiveData<>();
+//            mMagnitude = new MutableLiveData<>();
+//            mTimestamp = new MutableLiveData<>();
+//            subscribeToSteps();
+//        }
+//        return mStepCounter;
+//    }
+//
+//    public LiveData<String> getState() {
+//        if (mStepCounter == null) {
+//            getStepCounter();
+//        }
+//        return mState;
+//    }
+//
+//    public LiveData<Float> getMagnitute() {
+//        if(mStepCounter == null) {
+//            getStepCounter();
+//        }
+//        return mMagnitude;
+//    }
+//
+//    public LiveData<Float> getTimestamp() {
+//        if (mStepCounter == null) {
+//            getStepCounter();
+//        }
+//        return mTimestamp;
+//    }
 }
