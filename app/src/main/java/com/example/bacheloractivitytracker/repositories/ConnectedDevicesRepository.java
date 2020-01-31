@@ -21,8 +21,7 @@ public class ConnectedDevicesRepository {
     private List<ConnectedDeviceModel> connectedDevices = new ArrayList<>();
     private MutableLiveData<List<ConnectedDeviceModel>> mDataSet = new MutableLiveData<>();
 
-//    private MutableLiveData<ConnectedDeviceModel> mMutableDevice = new MutableLiveData<>();
-    private Disposable mSubscription;
+    private Disposable mConnectedDevicesSubscription;
 
     public static ConnectedDevicesRepository getInstance() {
         if (instance == null) {
@@ -32,8 +31,8 @@ public class ConnectedDevicesRepository {
         return instance;
     }
 
-    public void start() {
-        mSubscription = RxMds.Instance.connectedDeviceObservable().subscribe(connectedDevice -> {
+    private void startHandlingConnectedDevices() {
+        mConnectedDevicesSubscription = RxMds.Instance.connectedDeviceObservable().subscribe(connectedDevice -> {
             if(connectedDevice.getBody().getConnection() == null) {
                 //disconnected coz of range
                 removeDevice(connectedDevice);
@@ -60,15 +59,21 @@ public class ConnectedDevicesRepository {
         }
     }
 
-    public void stop() {
-        mSubscription.dispose();
+    private void stopHandlingConnectedDevices() {
+        mConnectedDevicesSubscription.dispose();
+        mConnectedDevicesSubscription = null;
     }
 
     public LiveData<List<ConnectedDeviceModel>> getConnectedDevices() {
+        if(mConnectedDevicesSubscription == null) {
+            startHandlingConnectedDevices();
+        }
         return mDataSet;
     }
 
-
-
-
+    @Override
+    protected void finalize() throws Throwable {
+        stopHandlingConnectedDevices();
+        super.finalize();
+    }
 }
